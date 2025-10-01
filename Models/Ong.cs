@@ -15,6 +15,5 @@ namespace GlobalLinkAPI.Models
         public string OngBairro { get; set; }
         public string OngCep { get; set; }
         public string? OngComplemento { get; set; }
-        public string OngMissao { get; set; }
     }
 }
