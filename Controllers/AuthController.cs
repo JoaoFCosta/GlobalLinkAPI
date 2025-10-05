@@ -8,11 +8,13 @@ using System.Text;
 using GlobalLinkAPI.Data;
 using GlobalLinkAPI.Models;
 using GlobalLinkAPI.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GlobalLinkAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;

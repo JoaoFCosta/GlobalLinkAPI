@@ -50,17 +50,19 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API de gestão de ONGs, Empresas, Doações e Necessidades"
     });
 
-    // Adiciona suporte para autenticação JWT no Swagger
+    // 🔐 Configuração correta para o Swagger exibir o botão "Authorize"
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Description = "Autenticação JWT usando o esquema Bearer.\n\n" +
+                      "Exemplo: **Bearer {seu_token}**",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Insira o token JWT desta forma: Bearer {seu token}"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",   
+        BearerFormat = "JWT"
     });
 
+    // 🔒 Exige o token em todos os endpoints
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -70,12 +72,16 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                }
+                },
+                Scheme = "bearer",
+                Name = "Authorization",
+                In = ParameterLocation.Header
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
+
 
 // --- CORS (apenas para dev) ---
 builder.Services.AddCors(options =>
