@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlobalLinkAPI.Data;
 using GlobalLinkAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GlobalLinkAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OngsController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;
