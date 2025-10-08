@@ -25,9 +25,21 @@ namespace GlobalLinkAPI.Controllers
         // GET: api/Donates
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Donate>>> GetDonations()
+        public async Task<ActionResult<IEnumerable<DonateDTO>>> GetDonations()
         {
-            return await _context.Donations.ToListAsync();
+            var donates = await _context.Donations
+        .Include(d => d.Company)
+        .Select(d => new DonateDTO
+        {
+            Id = d.Id,
+            EmpresaNome = d.Company!.EmpresaNome,
+            Tipo = d.Tipo,
+            Observacoes = d.Observacoes,
+            Status = d.Status
+        })
+        .ToListAsync();
+
+            return Ok(donates);
         }
 
         // GET: api/Donates/5
