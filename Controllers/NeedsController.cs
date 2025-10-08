@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlobalLinkAPI.Data;
@@ -13,7 +11,6 @@ namespace GlobalLinkAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class NeedsController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;
@@ -23,7 +20,7 @@ namespace GlobalLinkAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Needs
+        // 🟢 GET: api/Needs (público)
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Need>>> GetNeeds()
@@ -31,29 +28,26 @@ namespace GlobalLinkAPI.Controllers
             return await _context.Needs.ToListAsync();
         }
 
-        // GET: api/Needs/5
+        // 🟢 GET: api/Needs/5 (público)
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Need>> GetNeed(int id)
         {
             var need = await _context.Needs.FindAsync(id);
 
             if (need == null)
-            {
                 return NotFound();
-            }
 
             return need;
         }
 
-        // PUT: api/Needs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // 🔒 PUT: api/Needs/5 (protegido)
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutNeed(int id, Need need)
         {
             if (id != need.NecessidadeId)
-            {
                 return BadRequest();
-            }
 
             _context.Entry(need).State = EntityState.Modified;
 
@@ -64,21 +58,17 @@ namespace GlobalLinkAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!NeedExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
 
-        // POST: api/Needs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // 🔒 POST: api/Needs (protegido)
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Need>> PostNeed(Need need)
         {
             _context.Needs.Add(need);
@@ -87,15 +77,14 @@ namespace GlobalLinkAPI.Controllers
             return CreatedAtAction("GetNeed", new { id = need.NecessidadeId }, need);
         }
 
-        // DELETE: api/Needs/5
+        // 🔒 DELETE: api/Needs/5 (protegido)
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteNeed(int id)
         {
             var need = await _context.Needs.FindAsync(id);
             if (need == null)
-            {
                 return NotFound();
-            }
 
             _context.Needs.Remove(need);
             await _context.SaveChangesAsync();

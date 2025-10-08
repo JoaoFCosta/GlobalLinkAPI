@@ -2,14 +2,6 @@
 
 namespace GlobalLinkAPI.Models
 {
-    public enum StatusDoacao
-    {
-        Pendente,       // Criada, mas ainda não processada
-        EmTransito,     // A caminho da ONG
-        Recebida,       // ONG confirmou recebimento
-        Cancelada       // Doação cancelada
-    }
-
     public class Donate
     {
         public int Id { get; set; }
@@ -36,8 +28,7 @@ namespace GlobalLinkAPI.Models
         public int? Quantidade { get; set; }
 
         // Status
-        [EnumDataType(typeof(StatusDoacao))]
-        public StatusDoacao Status { get; set; } = StatusDoacao.Pendente;
+        public string Status { get; set; }
 
         // Observações adicionais
         public string? Observacoes { get; set; }

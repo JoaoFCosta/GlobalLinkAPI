@@ -13,7 +13,6 @@ namespace GlobalLinkAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class DonatesController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;
@@ -33,6 +32,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Donates/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Donate>> GetDonate(int id)
         {
             var donate = await _context.Donations.FindAsync(id);
@@ -48,6 +48,7 @@ namespace GlobalLinkAPI.Controllers
         // PUT: api/Donates/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutDonate(int id, Donate donate)
         {
             if (id != donate.Id)
@@ -79,6 +80,7 @@ namespace GlobalLinkAPI.Controllers
         // POST: api/Donates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Donate>> PostDonate(Donate donate)
         {
             _context.Donations.Add(donate);
@@ -89,6 +91,7 @@ namespace GlobalLinkAPI.Controllers
 
         // DELETE: api/Donates/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDonate(int id)
         {
             var donate = await _context.Donations.FindAsync(id);

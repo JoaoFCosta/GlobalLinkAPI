@@ -13,7 +13,6 @@ namespace GlobalLinkAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class OngsController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;
@@ -25,6 +24,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Ongs
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Ong>>> GetOngs()
         {
             return await _context.Ongs.ToListAsync();
@@ -47,6 +47,7 @@ namespace GlobalLinkAPI.Controllers
         // PUT: api/Ongs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOng(int id, Ong ong)
         {
             if (id != ong.OngId)
@@ -78,6 +79,7 @@ namespace GlobalLinkAPI.Controllers
         // POST: api/Ongs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Ong>> PostOng(Ong ong)
         {
             _context.Ongs.Add(ong);
@@ -88,6 +90,7 @@ namespace GlobalLinkAPI.Controllers
 
         // DELETE: api/Ongs/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOng(int id)
         {
             var ong = await _context.Ongs.FindAsync(id);

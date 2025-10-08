@@ -14,7 +14,6 @@ namespace GlobalLinkAPI.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CompaniesController : ControllerBase
     {
         private readonly GlobalLinkDbContext _context;
@@ -26,6 +25,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Companies
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
             return await _context.Companies.ToListAsync();
@@ -33,6 +33,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Company>> GetCompany(int id)
         {
             var company = await _context.Companies.FindAsync(id);
@@ -48,6 +49,7 @@ namespace GlobalLinkAPI.Controllers
         // PUT: api/Companies/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutCompany(int id, Company company)
         {
             if (id != company.EmpresaId)
@@ -79,6 +81,7 @@ namespace GlobalLinkAPI.Controllers
         // POST: api/Companies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Company>> PostCompany(Company company)
         {
             _context.Companies.Add(company);
@@ -89,6 +92,7 @@ namespace GlobalLinkAPI.Controllers
 
         // DELETE: api/Companies/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCompany(int id)
         {
             var company = await _context.Companies.FindAsync(id);
