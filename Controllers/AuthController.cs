@@ -56,6 +56,7 @@ namespace GlobalLinkAPI.Controllers
 
         // ---------------- REGISTRO EMPRESA ----------------
         [HttpPost("CompanyRegister")]
+        [AllowAnonymous]
         public async Task<ActionResult> CompanyRegister([FromBody] RegisterRequest request)
         {
             if (_context.Companies.Any(c => c.EmpresaEmail == request.Email))
@@ -82,6 +83,7 @@ namespace GlobalLinkAPI.Controllers
 
         // ---------------- REGISTRO ONG ----------------
         [HttpPost("OngRegister")]
+        [AllowAnonymous]
         public async Task<ActionResult> OngRegister([FromBody] RegisterRequest request)
         {
             if (_context.Ongs.Any(o => o.OngEmail == request.Email))
@@ -108,6 +110,7 @@ namespace GlobalLinkAPI.Controllers
 
         // ---------------- LOGIN EMPRESA ----------------
         [HttpPost("CompanyLogin")]
+        [AllowAnonymous]
         public async Task<ActionResult> CompanyLogin([FromBody] LoginRequest request)
         {
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.EmpresaEmail == request.Email);
@@ -130,6 +133,7 @@ namespace GlobalLinkAPI.Controllers
 
         // ---------------- LOGIN ONG ----------------
         [HttpPost("OngLogin")]
+        [AllowAnonymous]
         public async Task<ActionResult> OngLogin([FromBody] LoginRequest request)
         {
             var ong = await _context.Ongs.FirstOrDefaultAsync(o => o.OngEmail == request.Email);
