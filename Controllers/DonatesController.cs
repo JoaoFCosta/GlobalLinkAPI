@@ -60,7 +60,7 @@ namespace GlobalLinkAPI.Controllers
         // PUT: api/Donates/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> PutDonate(int id, Donate donate)
         {
             if (id != donate.Id)
@@ -126,7 +126,7 @@ namespace GlobalLinkAPI.Controllers
 
         // DELETE: api/Donates/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteDonate(int id)
         {
             var donate = await _context.Donations.FindAsync(id);

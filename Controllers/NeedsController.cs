@@ -43,7 +43,7 @@ namespace GlobalLinkAPI.Controllers
 
         // 🔒 PUT: api/Needs/5 (protegido)
         [HttpPut("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> PutNeed(int id, Need need)
         {
             if (id != need.NecessidadeId)
@@ -79,7 +79,7 @@ namespace GlobalLinkAPI.Controllers
 
         // 🔒 DELETE: api/Needs/5 (protegido)
         [HttpDelete("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteNeed(int id)
         {
             var need = await _context.Needs.FindAsync(id);
