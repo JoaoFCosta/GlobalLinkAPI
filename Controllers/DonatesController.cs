@@ -28,7 +28,7 @@ namespace GlobalLinkAPI.Controllers
         public async Task<ActionResult<IEnumerable<DonateDTO>>> GetDonations()
         {
             var donates = await _context.Donations
-                .Include(d => d.Company)
+                .Include(d => d.Empresa)
                 .Include(d => d.Ong)
                 .Select(d => new DonateDTO
                 {
@@ -38,7 +38,7 @@ namespace GlobalLinkAPI.Controllers
                     Tipo = d.Tipo,
                     Observacoes = d.Observacoes,
                     Status = d.Status,
-                    EmpresaNome = d.Company != null ? d.Company.EmpresaNome : "Desconhecido",
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
                     OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
                 })
                 .ToListAsync();
@@ -52,26 +52,25 @@ namespace GlobalLinkAPI.Controllers
         public async Task<ActionResult<DonateDTO>> GetDonate(int id)
         {
             var donate = await _context.Donations
-                .Include(d => d.Company)
+                .Include(d => d.Empresa)
                 .Include(d => d.Ong)
-                .FirstOrDefaultAsync(d => d.Id == id);
+                .Where(d => d.Id == id)
+                .Select(d => new DonateDTO
+                {
+                    Id = d.Id,
+                    EmpresaId = d.EmpresaId,
+                    OngId = d.OngId,
+                    Tipo = d.Tipo,
+                    Observacoes = d.Observacoes,
+                    Status = d.Status,
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                })
+                .FirstOrDefaultAsync();
 
-            if (donate == null)
-                return NotFound();
+            if (donate == null) return NotFound();
 
-            var dto = new DonateDTO
-            {
-                Id = donate.Id,
-                EmpresaId = donate.EmpresaId,
-                OngId = donate.OngId,
-                Tipo = donate.Tipo,
-                Observacoes = donate.Observacoes,
-                Status = donate.Status,
-                EmpresaNome = donate.Company?.EmpresaNome,
-                OngNome = donate.Ong?.OngNome
-            };
-
-            return Ok(dto);
+            return Ok(donate);
         }
 
         // PUT: api/Donates/5
@@ -125,21 +124,23 @@ namespace GlobalLinkAPI.Controllers
             _context.Donations.Add(donate);
             await _context.SaveChangesAsync();
 
-            // Busca nomes
-            var empresa = await _context.Companies.FindAsync(donate.EmpresaId);
-            var ong = await _context.Ongs.FindAsync(donate.OngId);
-
-            var result = new DonateDTO
-            {
-                Id = donate.Id,
-                EmpresaId = donate.EmpresaId,
-                OngId = donate.OngId,
-                Tipo = donate.Tipo,
-                Observacoes = donate.Observacoes,
-                Status = donate.Status,
-                EmpresaNome = empresa?.EmpresaNome ?? "Desconhecido",
-                OngNome = ong?.OngNome ?? "Desconhecido"
-            };
+            // Retorna DTO com nomes preenchidos
+            var result = await _context.Donations
+                .Include(d => d.Empresa)
+                .Include(d => d.Ong)
+                .Where(d => d.Id == donate.Id)
+                .Select(d => new DonateDTO
+                {
+                    Id = d.Id,
+                    EmpresaId = d.EmpresaId,
+                    OngId = d.OngId,
+                    Tipo = d.Tipo,
+                    Observacoes = d.Observacoes,
+                    Status = d.Status,
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                })
+                .FirstOrDefaultAsync();
 
             return CreatedAtAction(nameof(GetDonate), new { id = donate.Id }, result);
         }
@@ -150,10 +151,7 @@ namespace GlobalLinkAPI.Controllers
         public async Task<IActionResult> DeleteDonate(int id)
         {
             var donate = await _context.Donations.FindAsync(id);
-            if (donate == null)
-            {
-                return NotFound();
-            }
+            if (donate == null) return NotFound();
 
             _context.Donations.Remove(donate);
             await _context.SaveChangesAsync();
