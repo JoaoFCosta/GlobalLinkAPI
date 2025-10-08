@@ -93,12 +93,35 @@ namespace GlobalLinkAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<Donate>> PostDonate(Donate donate)
+        public async Task<ActionResult<DonateDTO>> PostDonate(DonateDTO dto)
         {
+            var donate = new Donate
+            {
+                EmpresaId = dto.EmpresaId,
+                OngId = dto.OngId,
+                Tipo = dto.Tipo,
+                Observacoes = dto.Observacoes,
+                Status = dto.Status,
+                DataCriacao = DateTime.UtcNow
+            };
+
             _context.Donations.Add(donate);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDonate", new { id = donate.Id }, donate);
+            // Retorna DTO com nomes preenchidos
+            var result = new DonateDTO
+            {
+                Id = donate.Id,
+                EmpresaId = donate.EmpresaId,
+                OngId = donate.OngId,
+                Tipo = donate.Tipo,
+                Observacoes = donate.Observacoes,
+                Status = donate.Status,
+                EmpresaNome = (await _context.Companies.FindAsync(donate.EmpresaId))?.EmpresaNome ?? "Desconhecido",
+                OngNome = (await _context.Ongs.FindAsync(donate.OngId))?.OngNome ?? "Desconhecido"
+            };
+
+            return CreatedAtAction(nameof(GetDonate), new { id = donate.Id }, result);
         }
 
         // DELETE: api/Donates/5
