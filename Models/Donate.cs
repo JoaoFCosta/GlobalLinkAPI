@@ -12,7 +12,7 @@ namespace GlobalLinkAPI.Models
         [Required]
         public int EmpresaId { get; set; }
 
-        public Company? Company { get; set; }
+        public Company? Empresa { get; set; }
 
         // ONG beneficiada
         [Required]

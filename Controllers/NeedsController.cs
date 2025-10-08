@@ -41,7 +41,6 @@ namespace GlobalLinkAPI.Controllers
             return need;
         }
 
-        // 🔒 PUT: api/Needs/5 (protegido)
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> PutNeed(int id, Need need)

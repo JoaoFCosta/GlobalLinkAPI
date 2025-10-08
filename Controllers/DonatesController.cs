@@ -28,16 +28,20 @@ namespace GlobalLinkAPI.Controllers
         public async Task<ActionResult<IEnumerable<DonateDTO>>> GetDonations()
         {
             var donates = await _context.Donations
-        .Include(d => d.Company)
-        .Select(d => new DonateDTO
-        {
-            Id = d.Id,
-            EmpresaNome = d.Company!.EmpresaNome,
-            Tipo = d.Tipo,
-            Observacoes = d.Observacoes,
-            Status = d.Status
-        })
-        .ToListAsync();
+                .Include(d => d.Company)
+                .Include(d => d.Ong)
+                .Select(d => new DonateDTO
+                {
+                    Id = d.Id,
+                    EmpresaId = d.EmpresaId,
+                    OngId = d.OngId,
+                    Tipo = d.Tipo,
+                    Observacoes = d.Observacoes,
+                    Status = d.Status,
+                    EmpresaNome = d.Company != null ? d.Company.EmpresaNome : "Desconhecido",
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                })
+                .ToListAsync();
 
             return Ok(donates);
         }
@@ -45,16 +49,29 @@ namespace GlobalLinkAPI.Controllers
         // GET: api/Donates/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Donate>> GetDonate(int id)
+        public async Task<ActionResult<DonateDTO>> GetDonate(int id)
         {
-            var donate = await _context.Donations.FindAsync(id);
+            var donate = await _context.Donations
+                .Include(d => d.Company)
+                .Include(d => d.Ong)
+                .FirstOrDefaultAsync(d => d.Id == id);
 
             if (donate == null)
-            {
                 return NotFound();
-            }
 
-            return donate;
+            var dto = new DonateDTO
+            {
+                Id = donate.Id,
+                EmpresaId = donate.EmpresaId,
+                OngId = donate.OngId,
+                Tipo = donate.Tipo,
+                Observacoes = donate.Observacoes,
+                Status = donate.Status,
+                EmpresaNome = donate.Company?.EmpresaNome,
+                OngNome = donate.Ong?.OngNome
+            };
+
+            return Ok(dto);
         }
 
         // PUT: api/Donates/5
@@ -108,7 +125,10 @@ namespace GlobalLinkAPI.Controllers
             _context.Donations.Add(donate);
             await _context.SaveChangesAsync();
 
-            // Retorna DTO com nomes preenchidos
+            // Busca nomes
+            var empresa = await _context.Companies.FindAsync(donate.EmpresaId);
+            var ong = await _context.Ongs.FindAsync(donate.OngId);
+
             var result = new DonateDTO
             {
                 Id = donate.Id,
@@ -117,8 +137,8 @@ namespace GlobalLinkAPI.Controllers
                 Tipo = donate.Tipo,
                 Observacoes = donate.Observacoes,
                 Status = donate.Status,
-                EmpresaNome = (await _context.Companies.FindAsync(donate.EmpresaId))?.EmpresaNome ?? "Desconhecido",
-                OngNome = (await _context.Ongs.FindAsync(donate.OngId))?.OngNome ?? "Desconhecido"
+                EmpresaNome = empresa?.EmpresaNome ?? "Desconhecido",
+                OngNome = ong?.OngNome ?? "Desconhecido"
             };
 
             return CreatedAtAction(nameof(GetDonate), new { id = donate.Id }, result);
