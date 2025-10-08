@@ -21,62 +21,92 @@ namespace GlobalLinkAPI.Controllers
         }
 
         // 🟢 GET: api/Needs (público)
+        // GET: api/Needs
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Need>>> GetNeeds()
+        public async Task<ActionResult<IEnumerable<NeedDTO>>> GetNeeds()
         {
-            return await _context.Needs.ToListAsync();
+            var needs = await _context.Needs
+                .Include(n => n.Ong)
+                .Select(n => new NeedDTO
+                {
+                    NecessidadeId = n.NecessidadeId,
+                    NecessidadeTitulo = n.NecessidadeTitulo,
+                    NecessidadeDescricao = n.NecessidadeDescricao,
+                    Urgencia = n.Urgencia,
+                    Categoria = n.Categoria,
+                    Local = n.Local,
+                    DataCriacao = n.DataCriacao,
+                    OngId = n.OngId,
+                    OngNome = n.Ong != null ? n.Ong.OngNome : "Desconhecido"
+                })
+                .ToListAsync();
+
+            return Ok(needs);
         }
 
-        // 🟢 GET: api/Needs/5 (público)
+        // GET: api/Needs/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Need>> GetNeed(int id)
+        public async Task<ActionResult<NeedDTO>> GetNeed(int id)
         {
-            var need = await _context.Needs.FindAsync(id);
+            var need = await _context.Needs
+                .Include(n => n.Ong)
+                .Where(n => n.NecessidadeId == id)
+                .Select(n => new NeedDTO
+                {
+                    NecessidadeId = n.NecessidadeId,
+                    NecessidadeTitulo = n.NecessidadeTitulo,
+                    NecessidadeDescricao = n.NecessidadeDescricao,
+                    Urgencia = n.Urgencia,
+                    Categoria = n.Categoria,
+                    Local = n.Local,
+                    DataCriacao = n.DataCriacao,
+                    OngId = n.OngId,
+                    OngNome = n.Ong != null ? n.Ong.OngNome : "Desconhecido"
+                })
+                .FirstOrDefaultAsync();
 
             if (need == null)
                 return NotFound();
 
-            return need;
+            return Ok(need);
         }
 
-        [HttpPut("{id}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> PutNeed(int id, Need need)
-        {
-            if (id != need.NecessidadeId)
-                return BadRequest();
-
-            _context.Entry(need).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NeedExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return NoContent();
-        }
-
-        // 🔒 POST: api/Needs (protegido)
+        // POST: api/Needs
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<Need>> PostNeed(Need need)
+        public async Task<ActionResult<NeedDTO>> PostNeed(NeedDTO dto)
         {
+            // Valida se a ONG existe
+            var ong = await _context.Ongs.FindAsync(dto.OngId);
+            if (ong == null)
+                return BadRequest("ONG não encontrada.");
+
+            // Cria a necessidade
+            var need = new Need
+            {
+                NecessidadeTitulo = dto.NecessidadeTitulo,
+                NecessidadeDescricao = dto.NecessidadeDescricao,
+                Urgencia = dto.Urgencia,
+                Categoria = dto.Categoria,
+                Local = dto.Local,
+                DataCriacao = DateTime.UtcNow,
+                OngId = dto.OngId
+            };
+
             _context.Needs.Add(need);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNeed", new { id = need.NecessidadeId }, need);
+            // Retorna o DTO com nome da ONG
+            dto.NecessidadeId = need.NecessidadeId;
+            dto.DataCriacao = need.DataCriacao;
+            dto.OngNome = ong.OngNome;
+
+            return CreatedAtAction(nameof(GetNeed), new { id = need.NecessidadeId }, dto);
         }
 
-        // 🔒 DELETE: api/Needs/5 (protegido)
+        // DELETE: api/Needs/5
         [HttpDelete("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteNeed(int id)
@@ -89,11 +119,6 @@ namespace GlobalLinkAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool NeedExists(int id)
-        {
-            return _context.Needs.Any(e => e.NecessidadeId == id);
         }
     }
 }
