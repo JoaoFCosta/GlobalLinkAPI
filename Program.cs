@@ -107,7 +107,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // CORS
 app.UseCors("AllowAll");
