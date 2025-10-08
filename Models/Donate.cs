@@ -36,6 +36,7 @@ namespace GlobalLinkAPI.Models
         public int? Quantidade { get; set; }
 
         // Status
+        [EnumDataType(typeof(StatusDoacao))]
         public StatusDoacao Status { get; set; } = StatusDoacao.Pendente;
 
         // Observações adicionais

@@ -25,6 +25,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Donates
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Donate>>> GetDonations()
         {
             return await _context.Donations.ToListAsync();

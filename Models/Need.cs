@@ -24,12 +24,15 @@ namespace GlobalLinkAPI.Models
         public int NecessidadeId { get; set; }
         public string NecessidadeTitulo { get; set; }
         public string NecessidadeDescricao { get; set; }
+
+        [EnumDataType(typeof(Categoria))]
         public Categoria NecessidadeCategoria { get; set; }
+
+        [EnumDataType(typeof(Urgencia))]
         public Urgencia NecessidadeUrgencia { get; set; }
+
         public string Local { get; set; }
         public DateTime DataCriacao { get; set; } = DateTime.Now;
-
-        //Relacionando com a ONG
 
         public int OngId { get; set; }
         public Ong? Ong { get; set; }

@@ -25,6 +25,7 @@ namespace GlobalLinkAPI.Controllers
 
         // GET: api/Needs
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Need>>> GetNeeds()
         {
             return await _context.Needs.ToListAsync();

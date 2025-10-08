@@ -58,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer",   
+        Scheme = "bearer",
         BearerFormat = "JWT"
     });
 
@@ -112,8 +112,8 @@ app.UseHttpsRedirection();
 // CORS
 app.UseCors("AllowAll");
 
-// ⚡ Autenticação e Autorização
-app.UseAuthentication();  // <- precisa vir antes do UseAuthorization
+// Autenticação e Autorização
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
