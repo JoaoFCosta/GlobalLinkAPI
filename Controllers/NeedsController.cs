@@ -106,6 +106,37 @@ namespace GlobalLinkAPI.Controllers
             return CreatedAtAction(nameof(GetNeed), new { id = need.NecessidadeId }, dto);
         }
 
+        // PUT: api/Needs/5
+        [HttpPut("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PutNeed(int id, NeedDTO dto)
+        {
+            if (id != dto.NecessidadeId)
+                return BadRequest();
+
+            // Valida se a ONG existe
+            var ong = await _context.Ongs.FindAsync(dto.OngId);
+            if (ong == null)
+                return BadRequest("ONG não encontrada.");
+
+            // Atualiza a necessidade
+            var need = await _context.Needs.FindAsync(id);
+            if (need == null)
+                return NotFound();
+
+            need.NecessidadeTitulo = dto.NecessidadeTitulo;
+            need.NecessidadeDescricao = dto.NecessidadeDescricao;
+            need.Urgencia = dto.Urgencia;
+            need.Categoria = dto.Categoria;
+            need.Local = dto.Local;
+            need.DataCriacao = DateTime.UtcNow;
+            need.OngId = dto.OngId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // DELETE: api/Needs/5
         [HttpDelete("{id}")]
         [AllowAnonymous]
