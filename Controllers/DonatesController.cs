@@ -33,13 +33,13 @@ namespace GlobalLinkAPI.Controllers
                 .Select(d => new DonateDTO
                 {
                     Id = d.Id,
-                    EmpresaId = d.EmpresaId,
                     OngId = d.OngId,
                     Tipo = d.Tipo,
                     Observacoes = d.Observacoes,
                     Status = d.Status,
-                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
-                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido",
+                    EmpresaId = d.EmpresaId,
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido"
                 })
                 .ToListAsync();
 
@@ -58,13 +58,13 @@ namespace GlobalLinkAPI.Controllers
                 .Select(d => new DonateDTO
                 {
                     Id = d.Id,
-                    EmpresaId = d.EmpresaId,
                     OngId = d.OngId,
                     Tipo = d.Tipo,
                     Observacoes = d.Observacoes,
                     Status = d.Status,
-                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
-                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido",
+                    EmpresaId = d.EmpresaId,
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido"
                 })
                 .FirstOrDefaultAsync();
 
@@ -77,14 +77,26 @@ namespace GlobalLinkAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> PutDonate(int id, Donate donate)
+        public async Task<IActionResult> PutDonate(int id, DonateDTO donateDto)
         {
-            if (id != donate.Id)
+            if (id != donateDto.Id)
             {
-                return BadRequest();
+                return BadRequest(new { message = "O ID da rota não corresponde ao corpo da requisição." });
             }
 
-            _context.Entry(donate).State = EntityState.Modified;
+            var donate = await _context.Donations.FindAsync(id);
+
+            if (donate == null)
+            {
+                return NotFound(new { message = $"Doação com ID {id} não encontrada." });
+            }
+
+            // Atualiza os campos permitidos a partir do DTO
+            donate.OngId = donateDto.OngId;
+            donate.EmpresaId = donateDto.EmpresaId;
+            donate.Tipo = donateDto.Tipo;
+            donate.Observacoes = donateDto.Observacoes;
+            donate.Status = donateDto.Status;
 
             try
             {
@@ -92,9 +104,9 @@ namespace GlobalLinkAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DonateExists(id))
+                if (!_context.Donations.Any(d => d.Id == id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Doação não encontrada durante a atualização." });
                 }
                 else
                 {
@@ -102,7 +114,20 @@ namespace GlobalLinkAPI.Controllers
                 }
             }
 
-            return NoContent();
+            // Retorna o objeto atualizado
+            return Ok(new
+            {
+                message = "Doação atualizada com sucesso!",
+                donate = new
+                {
+                    donate.Id,
+                    donate.OngId,
+                    donate.EmpresaId,
+                    donate.Tipo,
+                    donate.Observacoes,
+                    donate.Status
+                }
+            });
         }
 
         // POST: api/Donates
@@ -113,8 +138,8 @@ namespace GlobalLinkAPI.Controllers
         {
             var donate = new Donate
             {
-                EmpresaId = dto.EmpresaId,
                 OngId = dto.OngId,
+                EmpresaId = dto.EmpresaId,
                 Tipo = dto.Tipo,
                 Observacoes = dto.Observacoes,
                 Status = dto.Status,
@@ -132,13 +157,13 @@ namespace GlobalLinkAPI.Controllers
                 .Select(d => new DonateDTO
                 {
                     Id = d.Id,
-                    EmpresaId = d.EmpresaId,
                     OngId = d.OngId,
+                    EmpresaId = d.EmpresaId,
                     Tipo = d.Tipo,
                     Observacoes = d.Observacoes,
                     Status = d.Status,
-                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido",
-                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido"
+                    OngNome = d.Ong != null ? d.Ong.OngNome : "Desconhecido",
+                    EmpresaNome = d.Empresa != null ? d.Empresa.EmpresaNome : "Desconhecido"
                 })
                 .FirstOrDefaultAsync();
 
