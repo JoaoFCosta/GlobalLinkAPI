@@ -128,7 +128,7 @@ namespace GlobalLinkAPI.Controllers
                 "Company"
             );
 
-            return Ok(new { message = "Login realizado com sucesso", token });
+            return Ok(new { message = "Login realizado com sucesso", token, id = company.EmpresaId, email = company.EmpresaEmail, nome = company.EmpresaNome });
         }
 
         // ---------------- LOGIN ONG ----------------
@@ -151,7 +151,14 @@ namespace GlobalLinkAPI.Controllers
                 "Ong"
             );
 
-            return Ok(new { message = "Login realizado com sucesso", token });
+            return Ok(new
+            {
+                message = "Login realizado com sucesso",
+                token,
+                id = ong.OngId,
+                email = ong.OngEmail,
+                nome = ong.OngNome
+            });
         }
 
         // ---------------- HELPER: HASH SENHA ----------------

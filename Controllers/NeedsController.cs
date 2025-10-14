@@ -73,6 +73,22 @@ namespace GlobalLinkAPI.Controllers
             return Ok(need);
         }
 
+        // GET: api/Needs/ByOngName?nome=NomeDaONG
+        [HttpGet("ByOng/{ongEmail}")]
+        [AllowAnonymous]
+        // Retorna uma lista de NeedsDTO
+        public async Task<ActionResult<IEnumerable<Need>>> GetNeedsByOng(string ongEmail)
+        {
+            var needs = await _context.Needs
+                .Where(n => n.Ong.OngEmail == ongEmail)
+                .ToListAsync();
+
+            if (!needs.Any())
+                return NotFound("Nenhuma necessidade encontrada para esta ONG.");
+
+            return Ok(needs);
+        }
+
         // POST: api/Needs
         [HttpPost]
         [AllowAnonymous]
