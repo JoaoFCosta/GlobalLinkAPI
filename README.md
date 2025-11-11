@@ -42,3 +42,22 @@
 <img alt="POST Necessidades" src="./assets/postneeds.png">
 
 <img alt="POST Necessidades" src="./assets/postdoacoes.png">
+
+<hr>
+
+<h1>Instalação</h1>
+
+## Pré-requisitos
+
+- .NET 8.0
+- Pacotes NuGet (Versão referente ao .NET) <br>
+<img alt="Pacotes NuGet" src="./assets/nuget.png">
+
+<h1>Instalação</h1>
+
+```bash
+# Clone o repositório
+https://github.com/JoaoFCosta/GlobalLinkAPI.git
+
+# Execute o comando no Terminal
+dotnet Run
