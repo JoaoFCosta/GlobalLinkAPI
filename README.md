@@ -13,6 +13,9 @@
 
 - [Lista de EndPoints](#lista-de-endpoints)
 - [Resultados esperados pelos EndPoints](#resultados-esperados-pelos-endpoints)
+- [Instalação](#instalação)
+    - [Pré-requisitos](#pré-requisitos)
+  - [Instalação](#instalação)
 
 <h1>Lista de EndPoints</h1>
 
