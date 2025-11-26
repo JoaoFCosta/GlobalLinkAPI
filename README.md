@@ -9,6 +9,8 @@
 
 </div>
 
+<a href="/assets/DocumentacaoAPI.pdf"></a>
+
 # 📌 Índice
 
 - [Lista de EndPoints](#lista-de-endpoints)
