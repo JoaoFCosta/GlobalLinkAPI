@@ -9,7 +9,7 @@
 
 </div>
 
-<a href="/assets/DocumentacaoAPI.pdf"></a>
+<a href="/assets/DocumentacaoAPI.pdf">Documentação Técnica</a>
 
 # 📌 Índice
 
