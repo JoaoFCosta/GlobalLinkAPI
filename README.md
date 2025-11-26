@@ -64,5 +64,8 @@
 # Clone o repositório
 https://github.com/JoaoFCosta/GlobalLinkAPI.git
 
+# Altere o banco de dados
+Acesse o arquivo appsetting.json e altere o banco de dados
+
 # Execute o comando no Terminal
 dotnet Run
